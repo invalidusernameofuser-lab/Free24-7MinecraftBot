@@ -4,40 +4,52 @@ const bot = mineflayer.createBot({
   host: process.env.SERVER_IP || 'dynamic-6.magmanode.com',
   port: parseInt(process.env.SERVER_PORT) || 25702,
   onlineMode: false,
-  username: process.env.BOT_NAME || 'ErlingHaaland',
+  username: process.env.BOT_NAME || 'haaland',
   version: '1.21',
   physicsEnabled: false
 });
 
-// Spawn hone par command bhejte hain
 bot.on('spawn', () => {
-  console.log('Bot spawned! Sending authentication in 4 seconds...');
-  
+  console.log('Bot successfully spawned on the server!');
+
   setTimeout(() => {
-    // Pehle register try karega, agar already registered hai toh server ignore kar dega
-    bot.chat('/login monster123');
-    console.log('Sent register command');
-    
-    // 2 second baad login try karega
-    setTimeout(() => {
-        bot.chat('/login monster123');
-        console.log('Sent login command');
-    }, 2000);
-    
-  }, 4000);
+    // Railway variable check karega ki pehle register hua hai ya nahi
+    const isRegistered = process.env.IS_REGISTERED === 'true';
+
+    if (!isRegistered) {
+      console.log('First time join: Sending register command...');
+      bot.chat('/register haaland haaland');
+      
+      // Register hone ke turant baad login bhi bhej dete hain
+      setTimeout(() => {
+        bot.chat('/login haaland');
+      }, 2000);
+    } else {
+      console.log('Already registered: Sending login command...');
+      bot.chat('/login haaland');
+    }
+  }, 4000); 
 });
 
-// Anti-AFK
+// Anti-AFK: Jump every 5 minutes
 setInterval(() => {
-  if (bot && bot.entity) {
-    bot.setControlState('jump', true);
-    setTimeout(() => bot.setControlState('jump', false), 1000);
+  try {
+    if (bot && bot.entity) {
+      bot.setControlState('jump', true);
+      setTimeout(() => bot.setControlState('jump', false), 1000);
+    }
+  } catch (e) {
+    console.log('AFK jump error:', e);
   }
 }, 300000);
 
 bot.on('end', (reason) => {
-  console.log(`Disconnected: ${reason}. Reconnecting...`);
-  setTimeout(() => process.exit(1), 5000);
+  console.log(`Bot disconnected. Reason: ${reason}. Reconnecting via Railway...`);
+  setTimeout(() => {
+    process.exit(1); 
+  }, 5000);
 });
 
-bot.on('error', (err) => console.log('Error:', err));
+bot.on('error', (err) => {
+  console.log('An error occurred:', err);
+});
