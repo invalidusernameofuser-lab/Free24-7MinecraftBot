@@ -3,7 +3,7 @@ const mineflayer = require('mineflayer');
 let bot;
 const serverHost = process.env.SERVER_IP || 'dynamic-6.magmanode.com';
 const serverPort = parseInt(process.env.SERVER_PORT) || 25702;
-const botName = process.env.BOT_NAME || 'HaalandBot_99'; // Unique name rakhein
+const botName = process.env.BOT_NAME || 'AJEEBHAA';
 
 function createBot() {
   console.log(`Connecting to ${serverHost}:${serverPort} as ${botName}...`);
@@ -14,7 +14,8 @@ function createBot() {
     onlineMode: false,
     username: botName,
     version: '1.21',
-    physicsEnabled: false
+    physicsEnabled: false,
+    checkTimeoutInterval: 300000 // Timeout 5 minutes kar diya hai taaki server kick na kare
   });
 
   bot.on('spawn', () => {
@@ -29,7 +30,7 @@ function createBot() {
         bot.chat('/login monster123');
         console.log('Sent login command');
       }
-    }, 4000);
+    }, 5000); // 5 seconds wait taaki server puri tarah load kar le
 
     // Anti-AFK Jump every 5 minutes
     setInterval(() => {
@@ -43,11 +44,11 @@ function createBot() {
   });
 
   bot.on('end', (reason) => {
-    console.log(`Bot disconnected. Reason: ${reason}. Reconnecting in 10 seconds...`);
-    // Process exit ki jagah seedha 10 second baad function call karenge taaki loop control mein rahe
+    console.log(`Bot disconnected. Reason: ${reason}. Reconnecting in 15 seconds...`);
+    // Reconnection time 10s se badha kar 15s kar diya hai taaki server spam detect na kare
     setTimeout(() => {
       createBot();
-    }, 10000);
+    }, 15000);
   });
 
   bot.on('error', (err) => {
@@ -55,5 +56,4 @@ function createBot() {
   });
 }
 
-// Start the bot
 createBot();
