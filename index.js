@@ -1,10 +1,10 @@
 const mineflayer = require('mineflayer');
 
 const bot = mineflayer.createBot({
-  host: process.env.SERVER_IP || 'your_server_ip.aternos.me',
-  port: parseInt(process.env.SERVER_PORT) || 25565,
+  host: process.env.SERVER_IP || 'dynamic-6.magmanode.com',
+  port: parseInt(process.env.SERVER_PORT) || 25702,
   onlineMode: false,
-  username: process.env.BOT_NAME || 'AfnanBot',
+  username: process.env.BOT_NAME || 'FreeMinecraftBot',
   version: '1.21'
 });
 
