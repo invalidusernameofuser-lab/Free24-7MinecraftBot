@@ -4,7 +4,7 @@ const bot = mineflayer.createBot({
   host: process.env.SERVER_IP || 'dynamic-6.magmanode.com',
   port: parseInt(process.env.SERVER_PORT) || 25702,
   onlineMode: false,
-  username: process.env.BOT_NAME || 'AfnanBot',
+  username: process.env.BOT_NAME || 'Bot',
   version: '1.21'
 });
 
