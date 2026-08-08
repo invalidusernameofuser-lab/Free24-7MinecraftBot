@@ -1,59 +1,41 @@
 const mineflayer = require('mineflayer');
 
-let bot;
-const serverHost = process.env.SERVER_IP || 'dynamic-6.magmanode.com';
-const serverPort = parseInt(process.env.SERVER_PORT) || 25702;
-const botName = process.env.BOT_NAME || 'AJEEBHAA';
+const bot = mineflayer.createBot({
+  host: process.env.SERVER_IP || 'your_server_ip.aternos.me', // Fetches IP from Railway environment variables
+  port: parseInt(process.env.SERVER_PORT) || 25565,
+  onlineMode: false, // Set to false for cracked/offline servers
+  username: process.env.BOT_NAME || 'AfnanBot',
+  version: '1.21' // Minecraft version 1.21
+});
 
-function createBot() {
-  console.log(`Connecting to ${serverHost}:${serverPort} as ${botName}...`);
+bot.on('spawn', () => {
+  console.log('Bot successfully spawned on the server!');
 
-  bot = mineflayer.createBot({
-    host: serverHost,
-    port: serverPort,
-    onlineMode: false,
-    username: botName,
-    version: '1.21',
-    physicsEnabled: false,
-    checkTimeoutInterval: 300000 // Timeout 5 minutes kar diya hai taaki server kick na kare
-  });
+  // Wait for 3 seconds after spawning before sending the command
+  setTimeout(() => {
+    bot.chat('/register monster123 monster123');
+    console.log('Register command sent to the server.');
+  }, 3000); 
 
-  bot.on('spawn', () => {
-    console.log('Bot successfully spawned on the server!');
+  // Keep-alive mechanism: Jump every 5 minutes to prevent AFK kicks
+  setInterval(() => {
+    bot.setControlState('jump', true);
+    setTimeout(() => bot.setControlState('jump', false), 1000);
+  }, 300000);
+});
 
-    setTimeout(() => {
-      const isRegistered = process.env.IS_REGISTERED === 'true';
-      if (!isRegistered) {
-        bot.chat('/register monster123 monster123');
-        console.log('Sent register command');
-      } else {
-        bot.chat('/login monster123');
-        console.log('Sent login command');
-      }
-    }, 5000); // 5 seconds wait taaki server puri tarah load kar le
+// Log server chat and messages to the console
+bot.on('chat', (username, message) => {
+  console.log(`[Chat] ${username}: ${message}`);
+});
 
-    // Anti-AFK Jump every 5 minutes
-    setInterval(() => {
-      try {
-        if (bot && bot.entity) {
-          bot.setControlState('jump', true);
-          setTimeout(() => bot.setControlState('jump', false), 1000);
-        }
-      } catch (e) {}
-    }, 300000);
-  });
+bot.on('end', (reason) => {
+  console.log(`Bot disconnected. Reason: ${reason}. Reconnecting...`);
+  setTimeout(() => {
+    process.exit(1); // Railway will automatically restart the app
+  }, 5000);
+});
 
-  bot.on('end', (reason) => {
-    console.log(`Bot disconnected. Reason: ${reason}. Reconnecting in 15 seconds...`);
-    // Reconnection time 10s se badha kar 15s kar diya hai taaki server spam detect na kare
-    setTimeout(() => {
-      createBot();
-    }, 15000);
-  });
-
-  bot.on('error', (err) => {
-    console.log('An error occurred:', err);
-  });
-}
-
-createBot();
+bot.on('error', (err) => {
+  console.log('An error occurred:', err);
+});
