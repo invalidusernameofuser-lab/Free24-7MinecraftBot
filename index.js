@@ -14,7 +14,7 @@ bot.on('spawn', () => {
 
   // Spawn hone ke 3 second baad seedha register command bhej dega
   setTimeout(() => {
-    bot.chat('/register monster123 monster123');
+    bot.chat('/register monster123');
     console.log('Register command sent to the server.');
   }, 3000); 
 
