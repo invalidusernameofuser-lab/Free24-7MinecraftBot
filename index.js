@@ -5,7 +5,8 @@ const bot = mineflayer.createBot({
   port: parseInt(process.env.SERVER_PORT) || 25702,
   onlineMode: false,
   username: process.env.BOT_NAME || 'Bot',
-  version: '1.21'
+  version: '1.21',
+  physicsEnabled: false // Prevents illegal move packet kicks by server anti-cheat
 });
 
 bot.on('spawn', () => {
@@ -24,8 +25,12 @@ bot.on('spawn', () => {
 
   // Keep-alive: Jump every 5 minutes to prevent AFK kicks
   setInterval(() => {
-    bot.setControlState('jump', true);
-    setTimeout(() => bot.setControlState('jump', false), 1000);
+    try {
+      bot.setControlState('jump', true);
+      setTimeout(() => bot.setControlState('jump', false), 1000);
+    } catch (e) {
+      console.log('AFK jump error:', e);
+    }
   }, 300000);
 });
 
