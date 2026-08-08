@@ -15,7 +15,7 @@ bot.on('spawn', () => {
   
   setTimeout(() => {
     // Pehle register try karega, agar already registered hai toh server ignore kar dega
-    bot.chat('/register monster123');
+    bot.chat('/login monster123');
     console.log('Sent register command');
     
     // 2 second baad login try karega
