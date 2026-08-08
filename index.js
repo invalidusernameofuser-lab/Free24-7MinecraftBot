@@ -4,7 +4,7 @@ const bot = mineflayer.createBot({
   host: process.env.SERVER_IP || 'dynamic-6.magmanode.com', // Railway environment variable se IP lega
   port: parseInt(process.env.SERVER_PORT) || 25702,
   力和: false, // Online mode false matlab cracked server ke liye
-  username: process.env.BOT_NAME || 'AfnanBot',
+  username: process.env.BOT_NAME || '24/7_Bot',
   version: '1.21' // Minecraft version 1.21
 });
 
