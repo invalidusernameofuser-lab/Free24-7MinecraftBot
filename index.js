@@ -153,8 +153,8 @@ app.post('/chat', (req, res) => {
   res.redirect('/');
 });
 
-// Railway provides PORT dynamically
+// Railway requires '0.0.0.0' binding to route web traffic successfully
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Web dashboard running on port ${PORT}`);
 });
