@@ -6,45 +6,46 @@ const bot = mineflayer.createBot({
   onlineMode: false,
   username: process.env.BOT_NAME || 'Bot',
   version: '1.21',
-  physicsEnabled: false // Prevents illegal move packet kicks by server anti-cheat
+  physicsEnabled: false 
 });
 
 bot.on('spawn', () => {
-  console.log('Bot successfully spawned on the server!');
+  console.log('Bot successfully spawned!');
 
-  // Wait for 3 seconds after spawning, then login
-  setTimeout(() => {
-    // Agar server par pehle se account hai toh /login use karein:
-    bot.chat('/register monster123 monster123');
-    
-    // Agar bilkul naya server hai aur pehli baar register karna hai, toh upar wali line hata kar ye uncomment karein:
-    // bot.chat('/register monster123 monster123');
-    
-    console.log('Login command sent to the server.');
-  }, 3000); 
-
-  // Keep-alive: Jump every 5 minutes to prevent AFK kicks
+  // Anti-AFK Jump (5 minutes)
   setInterval(() => {
     try {
       bot.setControlState('jump', true);
       setTimeout(() => bot.setControlState('jump', false), 1000);
-    } catch (e) {
-      console.log('AFK jump error:', e);
-    }
+    } catch (e) {}
   }, 300000);
 });
 
-bot.on('chat', (username, message) => {
-  console.log(`[Chat] ${username}: ${message}`);
+// Server ke messages sunne ke liye
+bot.on('message', (jsonMsg) => {
+  const message = jsonMsg.toString();
+  console.log(`[Server]: ${message}`);
+
+  // Agar server kahe "register" karne ko
+  if (message.toLowerCase().includes('register')) {
+    setTimeout(() => {
+      bot.chat('/register monster123 monster123');
+      console.log('Registered successfully!');
+    }, 2000);
+  }
+
+  // Agar server kahe "login" karne ko
+  if (message.toLowerCase().includes('login')) {
+    setTimeout(() => {
+      bot.chat('/login monster123');
+      console.log('Logged in successfully!');
+    }, 2000);
+  }
 });
 
 bot.on('end', (reason) => {
-  console.log(`Bot disconnected. Reason: ${reason}. Reconnecting via Railway...`);
-  setTimeout(() => {
-    process.exit(1); // Railway will restart the bot automatically
-  }, 5000);
+  console.log(`Disconnected: ${reason}. Restarting...`);
+  setTimeout(() => process.exit(1), 5000);
 });
 
-bot.on('error', (err) => {
-  console.log('An error occurred:', err);
-});
+bot.on('error', (err) => console.log('Error:', err));
