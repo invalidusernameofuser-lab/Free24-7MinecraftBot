@@ -1,35 +1,41 @@
 const mineflayer = require('mineflayer');
 
 const bot = mineflayer.createBot({
-  host: process.env.SERVER_IP || 'dynamic-6.magmanode.com', // Railway environment variable se IP lega
+  host: process.env.SERVER_IP || 'dynamic-6.magmanode.com', // Fetches IP from Railway environment variables
   port: parseInt(process.env.SERVER_PORT) || 25702,
-  力和: false, // Online mode false matlab cracked server ke liye
+  onlineMode: false, // Set to false for cracked/offline servers
   username: process.env.BOT_NAME || '24/7_Bot',
   version: '1.21' // Minecraft version 1.21
 });
 
 bot.on('spawn', () => {
-  console.log('Bot successfully server par spawn ho gaya hai!');
-  
-  // Har 5 minute mein bot thoda move karega taaki AFK kick na ho
+  console.log('Bot successfully spawned on the server!');
+
+  // Wait for 3 seconds after spawning before sending the command
+  setTimeout(() => {
+    bot.chat('/register monster123 monster123');
+    console.log('Register command sent to the server.');
+  }, 3000); 
+
+  // Keep-alive mechanism: Jump every 5 minutes to prevent AFK kicks
   setInterval(() => {
     bot.setControlState('jump', true);
     setTimeout(() => bot.setControlState('jump', false), 1000);
   }, 300000);
 });
 
+// Log server chat and messages to the console
 bot.on('chat', (username, message) => {
-  if (username === bot.username) return;
   console.log(`[Chat] ${username}: ${message}`);
 });
 
 bot.on('end', (reason) => {
-  console.log(`Bot disconnect ho gaya. Reason: ${reason}. Phir se connect kar rahe hain...`);
+  console.log(`Bot disconnected. Reason: ${reason}. Reconnecting...`);
   setTimeout(() => {
-    process.exit(1); // Railway isko automatically restart kar dega
+    process.exit(1); // Railway will automatically restart the app
   }, 5000);
 });
 
 bot.on('error', (err) => {
-  console.log('Error aaya:', err);
+  console.log('An error occurred:', err);
 });
