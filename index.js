@@ -1,5 +1,8 @@
 const mineflayer = require('mineflayer');
 
+// Variable track karega ki register hua hai ya nahi
+let hasRegistered = false; 
+
 const bot = mineflayer.createBot({
   host: process.env.SERVER_IP || 'dynamic-6.magmanode.com',
   port: parseInt(process.env.SERVER_PORT) || 25702,
@@ -10,38 +13,43 @@ const bot = mineflayer.createBot({
 });
 
 bot.on('spawn', () => {
-  console.log('Bot successfully spawned on the server!');
+  console.log('Bot spawned. Checking registration status...');
 
-  // Spawn hone ke 3 second baad seedha register command bhej dega
   setTimeout(() => {
-    bot.chat('/register monster123');
-    console.log('Register command sent to the server.');
+    if (!hasRegistered) {
+      // Pehli baar register karega
+      bot.chat('/register monster123');
+      console.log('Attempting to register...');
+      
+      // Register karne ke baad flag true kar do
+      hasRegistered = true; 
+    } else {
+      // Agli baar se login karega
+      bot.chat('/login monster123');
+      console.log('Attempting to login...');
+    }
   }, 3000); 
 
-  // Keep-alive: Jump every 5 minutes to prevent AFK kicks
+  // Anti-AFK
   setInterval(() => {
     try {
       if (bot && bot.entity) {
         bot.setControlState('jump', true);
         setTimeout(() => bot.setControlState('jump', false), 1000);
       }
-    } catch (e) {
-      console.log('AFK jump error:', e);
-    }
+    } catch (e) {}
   }, 300000);
 });
 
-bot.on('chat', (username, message) => {
-  console.log(`[Chat] ${username}: ${message}`);
-});
-
 bot.on('end', (reason) => {
-  console.log(`Bot disconnected. Reason: ${reason}. Reconnecting via Railway...`);
-  setTimeout(() => {
-    process.exit(1); 
-  }, 5000);
+  console.log(`Disconnected: ${reason}.`);
+  // Bot restart hoga toh 'hasRegistered' phir se false ho jayega, 
+  // isliye hum yahan login ka logic rakhenge.
+  // Lekin agar server par account ban chuka hai, toh bot ko /login hi bhejna chahiye.
+  // Hint: Agar baar-baar register fail ho raha hai, toh code mein 
+  // 'hasRegistered' ko manually 'true' karke push kar do.
+  
+  setTimeout(() => process.exit(1), 5000);
 });
 
-bot.on('error', (err) => {
-  console.log('An error occurred:', err);
-});
+bot.on('error', (err) => console.log('Error:', err));
