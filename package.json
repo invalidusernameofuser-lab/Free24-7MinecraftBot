@@ -1,12 +1,13 @@
 {
-  "name": "mc-bot",
+  "name": "mc-bot-dashboard",
   "version": "1.0.0",
-  "description": "Minecraft 24/7 Bot",
+  "description": "Minecraft 24/7 Bot with Web Dashboard",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
+    "express": "^4.19.2",
     "mineflayer": "^4.20.0"
   }
 }
