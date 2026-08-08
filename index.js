@@ -15,7 +15,7 @@ bot.on('spawn', () => {
   // Wait for 3 seconds after spawning, then login
   setTimeout(() => {
     // Agar server par pehle se account hai toh /login use karein:
-    bot.chat('/login monster123');
+    bot.chat('hi');
     
     // Agar bilkul naya server hai aur pehli baar register karna hai, toh upar wali line hata kar ye uncomment karein:
     // bot.chat('/register monster123 monster123');
